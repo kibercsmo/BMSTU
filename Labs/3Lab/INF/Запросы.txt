@@ -1,0 +1,55 @@
+	//Все задачи с их приоритетом и сроками выполнения:
+
+SELECT title,priority,due_date FROM tasks;
+
+	//Все задачи определённого пользователя:
+
+SELECT title,name
+FROM task_assignments
+JOIN tasks ON tasks.id = task_assignments.task_id
+JOIN users ON users.id = task_assignments.user_id WHERE name = '[имя пользователя]';
+
+	//Задачи с высоким приоритетом истекающие в ближайшие 7 дней
+
+SELECT title,priority,due_date FROM tasks WHERE priority = 'Высокий' AND due_date < NOW() + INTERVAL '7 day' AND due_date >= NOW();
+
+	//Запрос на получение колличества задач в каждом статусе
+
+SELECT
+COUNT(CASE WHEN priority = 'Низкий' THEN 1 ELSE NULL END) AS Низкий,
+COUNT(CASE WHEN priority = 'Средний' THEN 1 ELSE NULL END) AS Средний,
+COUNT(CASE WHEN priority = 'Высокий' THEN 1 ELSE NULL END) AS Высокий
+FROM tasks;
+
+	//Отчет о просроченных задачах и ответственных на них
+
+SELECT title,due_date,name
+FROM task_assignments
+JOIN users ON users.id = task_assignments.user_id
+JOIN tasks ON tasks.id = task_assignments.task_id WHERE due_date < NOW();
+
+	//Запрос для обновления статуса задачи по ее индетефикатору
+
+UPDATE tasks
+SET status = '[СТАТУС]'
+WHERE id = [ИДЕНТИФИКАТОР];
+
+	//Удаление задачи с проверкой на связь
+
+DELETE FROM tasks WHERE NOT EXISTS (SELECT 1 FROM task_assignments WHERE tasks.id = task_assignments.task_id) AND id = [идентификатор];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
