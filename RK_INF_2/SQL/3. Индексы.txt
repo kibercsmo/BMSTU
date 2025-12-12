@@ -1,0 +1,7 @@
+CREATE INDEX idx_group_number ON students (group_number);
+
+CREATE INDEX idx_student_id ON students (student_id);
+
+ALTER TABLE notes ADD COLUMN tsv_content tsvector;
+UPDATE notes SET tsv_content = to_tsvector('russian', note_text);
+CREATE INDEX idx_notes_tsv ON notes USING GIN (tsv_content);

@@ -1,0 +1,59 @@
+//Найти 5 одногрупников (2 до и 5 после)//
+
+WITH student_info AS (
+    SELECT group_number, student_id
+    FROM students
+    WHERE student_id = 4
+)
+(
+    SELECT s.*
+    FROM students s
+    JOIN student_info si ON s.group_number = si.group_number
+    WHERE s.student_id < si.student_id
+    ORDER BY s.student_id DESC
+    LIMIT 2
+)
+UNION ALL
+(
+    SELECT s.*
+    FROM students s
+    JOIN student_info si ON s.group_number = si.group_number
+    WHERE s.student_id > si.student_id
+    ORDER BY s.student_id ASC
+    LIMIT 3
+)
+ORDER BY student_id;
+
+//Средний балл через представление//
+
+SELECT average_grade
+FROM student_avg_grades
+WHERE student_id = 3;
+
+//Полнотекствый поиск по заметкам//
+
+SELECT 
+    note_id,
+    student_id,
+    note_text
+FROM notes
+WHERE to_tsvector('russian', note_text) @@ to_tsquery('russian', 'Информатика')
+ORDER BY note_id DESC;
+
+//Обновлене посещаемости через транзакцию//
+
+BEGIN;
+IF EXISTS (
+	SELECT 1 FROM attendance 
+	WHERE student = 1 AND date_attended = '2025-12-11'
+) THEN
+DO UPDATE SET 
+status = FALSE,
+
+ELSE
+INSERT INTO attendance (student_id, date_attended, status)
+VALUES (1, '2025-12-11', FALSE)
+
+END IF;
+
+COMMIT;

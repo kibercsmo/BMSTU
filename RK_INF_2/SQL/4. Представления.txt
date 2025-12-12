@@ -1,0 +1,8 @@
+CREATE VIEW student_avg_grades AS
+SELECT
+    student_id,	
+    AVG(grade) AS AverageGrade
+FROM
+    grades
+GROUP BY
+    student_id;

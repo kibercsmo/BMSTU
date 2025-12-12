@@ -1,0 +1,20 @@
+BEGIN;
+
+WITH new_student AS (
+	INSERT INTO students(full_name,group_number)
+	VALUES('ФИО', 'НомерГруппы')
+	RETURNING student_id
+)
+
+INSERT INTO grades(student_id, subject_id, grade)
+SELECT student_id, subject_id, grade FROM(
+	SELECT student_id FROM new_student
+) AS s
+CROSS JOIN (
+	VALUES
+	('Айди Предмета','Оценка'),
+	('Айди Предмета','Оценка'),
+	('Айди Предмета','Оценка')
+)AS g(subject_id, grade);
+
+COMMIT;
